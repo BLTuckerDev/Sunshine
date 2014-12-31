@@ -1,8 +1,11 @@
 package com.example.brett.sunshine;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -27,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -49,18 +52,35 @@ public class ForecastFragment extends Fragment {
 
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		this.launchWeatherTask();
+	}
+
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch(item.getItemId()){
 			case R.id.action_refresh:
-				FetchWeatherTask weatherTask = new FetchWeatherTask();
-				weatherTask.execute("84720");
+				this.launchWeatherTask();
 				return true;
 
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
+
+
+	private void launchWeatherTask(){
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		String zipcode = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+
+		FetchWeatherTask weatherTask = new FetchWeatherTask();
+		weatherTask.execute(zipcode);
+	}
+
 
 
 	@Override
@@ -75,14 +95,33 @@ public class ForecastFragment extends Fragment {
 							 Bundle savedInstanceState) {
 
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-		List<String> mockForecast = new ArrayList<>();
-
-		listViewAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, mockForecast);
 		ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-		listView.setAdapter(listViewAdapter);
+		attachAdapter(listView);
+		setupOnClickListener(listView);
 
 		return rootView;
+	}
+
+
+	private void attachAdapter(ListView listview){
+		List<String> forecastRepository = new ArrayList<>();
+		listViewAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, forecastRepository);
+		listview.setAdapter(listViewAdapter);
+	}
+
+
+	private void setupOnClickListener(final ListView listview){
+
+		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent explicitIntent = new Intent(getActivity(), DetailActivity.class);
+				String weatherData = (String) listview.getAdapter().getItem(position);
+				explicitIntent.putExtra(DetailActivity.IntentExtras.Forecast, weatherData);
+				getActivity().startActivity(explicitIntent);
+			}
+		});
+
 	}
 
 
@@ -91,11 +130,8 @@ public class ForecastFragment extends Fragment {
 
 		private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-
 		@Override
 		protected String[] doInBackground(String... params) {
-			// These two need to be declared outside the try/catch
-// so that they can be closed in the finally block.
 
 			if(params.length == 0){
 				return null;
@@ -215,6 +251,19 @@ public class ForecastFragment extends Fragment {
 			long roundedHigh = Math.round(high);
 			long roundedLow = Math.round(low);
 
+
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+			String unitsPreference = prefs.getString(getString(R.string.pref_units_key), getString(R.string.pref_units_default));
+
+			if(unitsPreference.equals("imperial")){
+				roundedHigh = Math.round(roundedHigh * 1.8 + 32);
+				roundedLow = Math.round(roundedLow * 1.8 + 32);
+			}
+
+
+
+
 			String highLowStr = roundedHigh + "/" + roundedLow;
 			return highLowStr;
 		}
@@ -273,10 +322,5 @@ public class ForecastFragment extends Fragment {
 
 			return resultStrs;
 		}
-
-
-
 	}
-
-
 }
