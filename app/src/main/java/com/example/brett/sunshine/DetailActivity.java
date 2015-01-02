@@ -10,7 +10,7 @@ import android.view.MenuItem;
 public class DetailActivity extends ActionBarActivity {
 
 	public static class IntentExtras {
-		public static final String Forecast = "forecast";
+		public static final String ForecastDate = "forecastDate";
 	}
 
 
