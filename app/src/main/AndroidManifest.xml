@@ -6,10 +6,11 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:theme="@style/ForecastTheme"
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
@@ -19,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/AppTheme"
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity" >

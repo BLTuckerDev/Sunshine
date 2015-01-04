@@ -19,8 +19,14 @@ public class DetailActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_detail);
 		if (savedInstanceState == null) {
+
+			DetailFragment df = new DetailFragment();
+			Bundle args = new Bundle();
+			args.putString(DetailActivity.IntentExtras.ForecastDate, getIntent().getExtras().getString(IntentExtras.ForecastDate));
+			df.setArguments(args);
+
 			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new DetailFragment())
+					.add(R.id.weather_detail_container,df)
 					.commit();
 		}
 
@@ -29,8 +35,6 @@ public class DetailActivity extends ActionBarActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_detail, menu);
 		return true;
 	}
 

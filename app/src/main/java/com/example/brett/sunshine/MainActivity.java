@@ -1,5 +1,6 @@
 package com.example.brett.sunshine;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -9,22 +10,31 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.brett.sunshine.data.WeatherContract;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements ForecastFragmentCallbackListener {
 
 	private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+	private boolean isTwoPaneMode = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.container, new ForecastFragment())
-					.commit();
+		Log.d(LOG_TAG, "onCreate()");
+
+		if(findViewById(R.id.weather_detail_container) != null){
+			isTwoPaneMode = true;
+			if(savedInstanceState == null){
+				getSupportFragmentManager().beginTransaction().replace(R.id.weather_detail_container, new DetailFragment()).commit();
+			}
 		}
 
-		Log.d(LOG_TAG, "onCreate()");
+		ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+		forecastFragment.setUseTodayLayout(!isTwoPaneMode);
+
 	}
 
 
@@ -122,5 +132,24 @@ public class MainActivity extends ActionBarActivity {
 	private void startSettingsActivity(){
 		Intent settingsIntent = new Intent(this, SettingsActivity.class);
 		startActivity(settingsIntent);
+	}
+
+
+	@Override
+	public void onItemSelected(String date) {
+
+		if(isTwoPaneMode){
+			Bundle args = new Bundle();
+			args.putString(DetailActivity.IntentExtras.ForecastDate, date);
+			DetailFragment df = new DetailFragment();
+			df.setArguments(args);
+			android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.replace(R.id.weather_detail_container, df);
+			ft.commit();
+		} else {
+			Intent explicitIntent = new Intent(this, DetailActivity.class);
+			explicitIntent.putExtra(DetailActivity.IntentExtras.ForecastDate, date);
+			startActivity(explicitIntent);
+		}
 	}
 }
