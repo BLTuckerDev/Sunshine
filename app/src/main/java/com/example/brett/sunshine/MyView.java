@@ -5,9 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityEventSource;
+import android.view.accessibility.AccessibilityManager;
 
 public final class MyView extends View{
 
@@ -16,7 +20,7 @@ public final class MyView extends View{
 	private final static int minWidth = 100;
 
 	private double windDirection = 0.0;
-	private int windSpeed = 0;
+	private double windSpeed = 0.0;
 
 	private final Paint arcPaint = new Paint();
 	private final Paint textPaint = new Paint();
@@ -97,11 +101,12 @@ public final class MyView extends View{
 
 		textPaint.setColor(Color.BLACK);
 		textPaint.setStyle(Paint.Style.FILL);
-		textPaint.setTextSize(40);
+		textPaint.setTextSize(20);
 		textPaint.setTextAlign(Paint.Align.CENTER);
 
 		needlePaint.setColor(Color.RED);
 		needlePaint.setStyle(Paint.Style.STROKE);
+		needlePaint.setStrokeCap(Paint.Cap.ROUND);
 		needlePaint.setStrokeWidth(7);
 		needlePaint.setAlpha(150);
 
@@ -117,20 +122,35 @@ public final class MyView extends View{
 
 		canvas.drawArc(rectangle, 0, 360, false, arcPaint);
 
-		canvas.drawText(this.windSpeed + units, Math.round(getMeasuredWidth() * .5), Math.round(getMeasuredHeight() * .35), textPaint);
 
-		Log.d("MYVIEW", "Wind Direction: " + windDirection);
+		if(!helper.isMetric(getContext())){
+			windSpeed = windSpeed * .621371192237334f;
+		}
+		canvas.drawText(String.format("%.0f %s", windSpeed, units), Math.round(getMeasuredWidth() * .5), Math.round(getMeasuredHeight() * .35), textPaint);
+
 		double radians = Math.toRadians(windDirection - 90);
 		float endX = (float) (centerX + radius * Math.cos(radians));
 		float endY = (float) (centerY + radius * Math.sin(radians));
 
+
+
 		canvas.drawLine(centerX, centerY, endX , endY, needlePaint);
 
+		float endArrowLineTopX =  (float) (endX + 25 * Math.cos(Math.toRadians(225)));
+		float endArrowLineTopY = (float) (endY + 25 * Math.sin(Math.toRadians(225)));
 
-		float northX = (float) (centerX + radius * Math.cos(Math.toRadians(0 - 90)));
-		float northY = (float) (centerY + radius * Math.sin(Math.toRadians(0 - 90)));
+		canvas.drawLine(endX, endY, endArrowLineTopX, endArrowLineTopY, needlePaint);
 
-		canvas.drawText("N", northX, northY, compassPointsPaint);
+		float endArrowBottomLineX =  (float) (endX + 25 * Math.cos(Math.toRadians(285)));
+		float endArrowBottomLineY = (float) (endY + 25 * Math.sin(Math.toRadians(285)));
+
+		canvas.drawLine(endX, endY, endArrowBottomLineX, endArrowBottomLineY, needlePaint);
+
+
+		canvas.drawText("N", centerX, Math.round(getMeasuredHeight() * .15), compassPointsPaint);
+		canvas.drawText("E", Math.round(getMeasuredWidth() * .85), centerY, compassPointsPaint);
+		canvas.drawText("S", centerX, Math.round(getMeasuredHeight() * .85), compassPointsPaint);
+		canvas.drawText("W", Math.round(getMeasuredWidth() * .15), centerY, compassPointsPaint);
 
 	}
 
@@ -142,15 +162,35 @@ public final class MyView extends View{
 
 	public void setWindDirection(double windDirection) {
 		this.windDirection = windDirection;
+		AccessibilityManager accessibilityManager =
+				(AccessibilityManager) this.getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+
+		if(accessibilityManager.isEnabled()){
+			sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED);
+		}
 	}
 
 
-	public int getWindSpeed() {
+	public double getWindSpeed() {
 		return windSpeed;
 	}
 
 
-	public void setWindSpeed(int windSpeed) {
+	public void setWindSpeed(double windSpeed) {
 		this.windSpeed = windSpeed;
+		AccessibilityManager accessibilityManager =
+				(AccessibilityManager) this.getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+
+		if(accessibilityManager.isEnabled()){
+			sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED);
+		}
+	}
+
+
+	@Override
+	public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+		ListViewItemFormatHelper helper = new ListViewItemFormatHelper();
+		event.getText().add(helper.getFormattedWind(this.getContext(), (float)this.windSpeed, (float)this.windDirection));
+		return true;
 	}
 }

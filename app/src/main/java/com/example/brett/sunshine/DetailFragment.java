@@ -155,7 +155,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 			pressureTextView.setText(getString(R.string.format_pressure, pressure));
 
-			compass.setWindSpeed(Math.round(windSpeed));
+			compass.setWindSpeed(windSpeed);
 			compass.setWindDirection(windDirection);
 
 		}
