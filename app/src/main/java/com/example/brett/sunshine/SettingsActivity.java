@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.example.brett.sunshine.data.WeatherContract;
+import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 
 import junit.runner.Version;
 
@@ -61,9 +62,7 @@ public class SettingsActivity extends PreferenceActivity
 
 		if ( !bindingPreference ) {
 			if (preference.getKey().equals(getString(R.string.pref_location_key))) {
-				FetchWeatherTask weatherTask = new FetchWeatherTask(this);
-				String location = value.toString();
-				weatherTask.execute(location);
+				SunshineSyncAdapter.initializeSyncAdapter(this);
 			} else {
 				// notify code that weather may be impacted
 				getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);

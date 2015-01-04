@@ -1,6 +1,10 @@
 package com.example.brett.sunshine;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.brett.sunshine.data.WeatherContract;
+import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 
 import java.util.Date;
 
@@ -90,9 +95,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
 	private void launchWeatherTask(){
-		String zipcode = new PreferredLocationFetcher().getPreferredLocation(getActivity());
-		FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-		weatherTask.execute(zipcode);
+		SunshineSyncAdapter.initializeSyncAdapter(getActivity());
 	}
 
 
