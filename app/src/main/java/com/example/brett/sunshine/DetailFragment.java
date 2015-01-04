@@ -41,6 +41,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private TextView windTextView;
 	private TextView pressureTextView;
 
+	private MyView compass;
+
 	public DetailFragment(){
 		this.setHasOptionsMenu(true);
 	}
@@ -66,6 +68,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
 		imageView = (ImageView) rootView.findViewById(R.id.forecast_detail_icon);
+
+		compass = (MyView) rootView.findViewById(R.id.forecast_detail_compass);
 
 		dateTextView = (TextView) rootView.findViewById(R.id.forecast_detail_date);
 		descriptionTextView = (TextView) rootView.findViewById(R.id.forecast_detail_description);
@@ -150,6 +154,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 			float pressure = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE));
 
 			pressureTextView.setText(getString(R.string.format_pressure, pressure));
+
+			compass.setWindSpeed(Math.round(windSpeed));
+			compass.setWindDirection(windDirection);
 
 		}
 

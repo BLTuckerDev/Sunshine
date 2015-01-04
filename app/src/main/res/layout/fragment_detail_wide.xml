@@ -7,7 +7,9 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp">
 
 
 
@@ -16,11 +18,14 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="15dp">
+                android:padding="15dp"
+                android:layout_marginRight="16dp">
 
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="24sp"
                     android:id="@+id/forecast_detail_day"
                     android:text="Today"/>
 
@@ -28,7 +33,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/forecast_detail_date"
-                    android:text="Today June 24"
+                    android:textColor="@color/light_text"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="June 24"
                     />
 
         </LinearLayout>
@@ -43,6 +51,8 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="96sp"
+                    android:fontFamily="sans-serif-light"
                     android:text="21"
                     android:id="@+id/forecast_detail_high"
                     />
@@ -51,8 +61,12 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="48sp"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="@color/light_text"
                     android:text="15"
                     android:id="@+id/forecast_detail_low"
+                    android:layout_marginBottom="16dp"
                     />
 
 
@@ -60,6 +74,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/forecast_detail_humidity"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge"
                     android:text="4"/>
 
 
@@ -67,6 +84,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/forecast_detail_wind"
+                    android:layout_marginBottom="4dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge"
                     android:text="5"/>
 
 
@@ -74,6 +94,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/forecast_detail_pressure"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge"
                     android:text="6"/>
 
 
@@ -88,8 +110,8 @@
                 android:layout_height="wrap_content">
 
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="144dp"
+                    android:layout_height="144dp"
                     android:src="@drawable/ic_launcher"
                     android:id="@+id/forecast_detail_icon"
                     android:layout_gravity="center"
@@ -100,6 +122,9 @@
                     android:layout_height="wrap_content"
                     android:text="Sunny"
                     android:id="@+id/forecast_detail_description"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/light_text"
                     android:layout_gravity="center"/>
 
 

@@ -12,14 +12,16 @@
             android:orientation="vertical"
             android:layout_weight="1"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:layout_marginLeft="60dp">
 
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge"
                 android:text="Tomorrow"
                 android:id="@+id/forecast_list_item_date"/>
 
@@ -27,8 +29,9 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textSize="72sp"
                 android:text="21"
-                android:layout_gravity="center_horizontal"
                 android:id="@+id/forecast_list_item_high"
                 />
 
@@ -36,8 +39,9 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textSize="36sp"
                 android:text="15"
-                android:layout_gravity="center_horizontal"
                 android:id="@+id/forecast_list_item_low"
                 />
 
@@ -52,18 +56,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_weight="1">
+        
 
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
-                android:id="@+id/forecast_list_item_icon"
-                android:layout_gravity="center"/>
+            <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_launcher"
+                    android:id="@+id/forecast_list_item_icon"
+                    android:layout_gravity="center"/>
+
+
+
 
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge"
                 android:text="Sunny"
                 android:id="@+id/forecast_list_item_description"
                 android:layout_gravity="center"/>

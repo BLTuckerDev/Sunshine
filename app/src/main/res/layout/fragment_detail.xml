@@ -22,12 +22,17 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="24sp"
                     android:id="@+id/forecast_detail_day"
                     android:text="Today"/>
 
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="16sp"
+                    android:textColor="@color/light_text"
                     android:id="@+id/forecast_detail_date"
                     android:text="Today June 24"
                     />
@@ -52,6 +57,8 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="96sp"
                         android:text="21"
                         android:id="@+id/forecast_detail_high"
                         />
@@ -60,6 +67,9 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="48sp"
+                        android:textColor="@color/light_text"
                         android:text="15"
                         android:id="@+id/forecast_detail_low"
                         />
@@ -74,11 +84,12 @@
                     android:layout_height="wrap_content">
 
                 <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
                         android:src="@drawable/ic_launcher"
                         android:id="@+id/forecast_detail_icon"
                         android:layout_gravity="center"
+
                         />
 
                 <TextView
@@ -86,6 +97,8 @@
                         android:layout_height="wrap_content"
                         android:text="Sunny"
                         android:id="@+id/forecast_detail_description"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textColor="@color/light_text"
                         android:layout_gravity="center"/>
 
 
@@ -106,6 +119,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/forecast_detail_humidity"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:fontFamily="sans-serif-light"
                         android:text="4"/>
 
 
@@ -113,6 +129,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/forecast_detail_wind"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:fontFamily="sans-serif-light"
                         android:text="5"/>
 
 
@@ -120,15 +139,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/forecast_detail_pressure"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:fontFamily="sans-serif-light"
                         android:text="6"/>
-
-
-
+            
+            
+            <com.example.brett.sunshine.MyView
+                    android:id="@+id/forecast_detail_compass"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"/>
 
         </LinearLayout>
-
-
     </LinearLayout>
-
 </ScrollView>
 
