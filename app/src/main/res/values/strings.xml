@@ -54,5 +54,7 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
 
     <!-- Strings related to Notification preference -->
     <string name="pref_last_notification">last_notification</string>
+    <string name="notification_preference_title">Enable Notifications</string>
+    <string name="notification_preference_key">notification_pref_key</string>
 
 </resources>

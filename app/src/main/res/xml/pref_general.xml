@@ -24,5 +24,8 @@
             />
 
 
-
+    <CheckBoxPreference
+        android:title="@string/notification_preference_title"
+        android:key="@string/notification_preference_key"
+        android:defaultValue="true" />
 </PreferenceScreen>

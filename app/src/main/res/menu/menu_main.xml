@@ -3,9 +3,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
 
-    <item android:id="@+id/action_main_map_location"
-          android:title="@string/map_location"
-          app:showAsAction="never" />
+
 
 
 

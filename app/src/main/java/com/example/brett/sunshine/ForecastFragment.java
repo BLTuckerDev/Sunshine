@@ -7,8 +7,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -58,10 +60,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			WeatherEntry.COLUMN_MAX_TEMP,
 			WeatherEntry.COLUMN_MIN_TEMP,
 			WeatherEntry.COLUMN_WEATHER_ID,
-			WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
+			WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+			WeatherContract.LocationEntry.COLUMN_LATITUDE,
+			WeatherContract.LocationEntry.COLUMN_LONGITUDE
 	};
 
 	public ForecastFragment() {
+		this.setHasOptionsMenu(true);
 	}
 
 
@@ -87,6 +92,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			case R.id.action_refresh:
 				this.launchWeatherTask();
 				return true;
+			case R.id.action_main_map_location:
+				this.sendMapsIntent();
+				return true;
 
 			default:
 				return super.onOptionsItemSelected(item);
@@ -98,6 +106,27 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 		SunshineSyncAdapter.initializeSyncAdapter(getActivity());
 	}
 
+
+	private void sendMapsIntent(){
+		Intent mapsIntent = new Intent(Intent.ACTION_VIEW);
+		Uri.Builder builder = new Uri.Builder();
+
+		Cursor c = listViewAdapter.getCursor();
+
+		if(c != null && c.moveToFirst()){
+
+			String latitude = c.getString(c.getColumnIndex(WeatherContract.LocationEntry.COLUMN_LATITUDE));
+			String longitude = c.getString(c.getColumnIndex(WeatherContract.LocationEntry.COLUMN_LONGITUDE));
+
+			Uri geoLocation = Uri.parse("geo:" + latitude + "," + longitude);
+
+			mapsIntent.setData(geoLocation);
+			if(mapsIntent.resolveActivity(getActivity().getPackageManager()) != null){
+				startActivity(mapsIntent);
+			}
+
+		}
+	}
 
 
 	@Override

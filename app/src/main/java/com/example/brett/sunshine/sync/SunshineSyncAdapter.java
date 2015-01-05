@@ -2,12 +2,15 @@ package com.example.brett.sunshine.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SyncRequest;
 import android.content.SyncResult;
@@ -16,9 +19,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.example.brett.sunshine.ListViewItemFormatHelper;
+import com.example.brett.sunshine.MainActivity;
+import com.example.brett.sunshine.NotificationPreferenceFetcher;
 import com.example.brett.sunshine.PreferredLocationFetcher;
 import com.example.brett.sunshine.R;
 import com.example.brett.sunshine.data.WeatherContract;
@@ -34,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -179,7 +187,15 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 
 
 	private void notifyWeather() {
+
 		Context context = getContext();
+
+		NotificationPreferenceFetcher notificationPrefFetcher = new NotificationPreferenceFetcher();
+
+		if(!notificationPrefFetcher.areNotificationsEnabled(context)){
+			return;
+		}
+
 		//checking the last update and notify if it' the first of the day
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String lastNotificationKey = context.getString(R.string.pref_last_notification);
@@ -213,6 +229,26 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 						formatHelper.formatTemperature(context, low, isMetric));
 
 				//build your notification here.
+
+				NotificationCompat.Builder notifcationBuilder = new NotificationCompat.Builder(getContext());
+
+				notifcationBuilder.setSmallIcon(iconId)
+						.setContentTitle(title)
+						.setContentText(contentText);
+
+				Intent resultIntent = new Intent(getContext(), MainActivity.class);
+
+				TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
+				stackBuilder.addParentStack(MainActivity.class);
+				stackBuilder.addNextIntent(resultIntent);
+
+				PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+				notifcationBuilder.setContentIntent(resultPendingIntent);
+
+				NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+				notificationManager.notify(WEATHER_NOTIFICATION_ID, notifcationBuilder.build());
 
 
 				//refreshing last sync
@@ -375,7 +411,19 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 			if(cVVector.size() > 0){
 				ContentValues[] valuesArray = new ContentValues[cVVector.size()];
 				cVVector.copyInto(valuesArray);
+
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DATE, -1);
+				Date yesterday = cal.getTime();
+				String queryParam = WeatherContract.getDbDateString(yesterday);
+				 int deletedRows = getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+						  WeatherContract.WeatherEntry.COLUMN_DATETEXT + " <= ?",
+						  new String[]{queryParam});
+
+				Log.d(LOG_TAG, "Deleted: " + deletedRows + " + rows of old weather data");
+
 				getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, valuesArray);
+				this.notifyWeather();
 			}
 		}
 	}

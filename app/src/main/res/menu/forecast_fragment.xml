@@ -7,4 +7,8 @@
           android:title="@string/refresh"
           app:showAsAction="never"/>
 
+    <item android:id="@+id/action_main_map_location"
+          android:title="@string/map_location"
+          app:showAsAction="never" />
+
 </menu>
