@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.brett.sunshine.data.WeatherContract;
+import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 
 
 public class MainActivity extends ActionBarActivity implements ForecastFragmentCallbackListener {
@@ -34,6 +35,8 @@ public class MainActivity extends ActionBarActivity implements ForecastFragmentC
 
 		ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
 		forecastFragment.setUseTodayLayout(!isTwoPaneMode);
+
+		SunshineSyncAdapter.initializeSyncAdapter(this);
 
 	}
 
