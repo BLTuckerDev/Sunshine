@@ -1,42 +1,41 @@
 package com.example.brett.sunshine;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.brett.sunshine.data.WeatherContract;
 import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 import static com.example.brett.sunshine.data.WeatherContract.WeatherEntry;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener{
 
 	private static final int FORECAST_LOADER = 0;
 	private String mLocation;
@@ -78,10 +77,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 	@Override
 	public void onResume() {
-		super.onResume();
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		sp.registerOnSharedPreferenceChangeListener(this);
+
 		if (mLocation != null && !mLocation.equals(new PreferredLocationFetcher().getPreferredLocation(getActivity()))) {
 			getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
 		}
+
+		super.onResume();
+	}
+
+	@Override
+	public void onPause() {
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		sp.unregisterOnSharedPreferenceChangeListener(this);
+		super.onPause();
 	}
 
 
@@ -188,12 +198,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				if(ForecastFragment.this.listener != null){
+				if (ForecastFragment.this.listener != null) {
 					ForecastFragment.this.selectedPosition = position;
-					ForecastAdapter adapter = (ForecastAdapter)	parent.getAdapter();
+					ForecastAdapter adapter = (ForecastAdapter) parent.getAdapter();
 					Cursor cursor = adapter.getCursor();
 
-					if(cursor != null && cursor.moveToPosition(position)){
+					if (cursor != null && cursor.moveToPosition(position)) {
 						String dateString = cursor.getString(cursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT));
 						ForecastFragment.this.listener.onItemSelected(dateString);
 					}
@@ -237,11 +247,45 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 	@Override
 	public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
 		listViewAdapter.swapCursor(data);
-		if(selectedPosition != ListView.INVALID_POSITION){
+		if (selectedPosition != ListView.INVALID_POSITION) {
 			listView.smoothScrollToPosition(selectedPosition);
 		}
+		updateEmptyViewStatusText();
 	}
 
+
+	private void updateEmptyViewStatusText() {
+		if (listViewAdapter.getCount() == 0) {
+			TextView emptyView = (TextView) getView().findViewById(R.id.empty_weather_list_view);
+			if(emptyView != null){
+
+
+				int message = R.string.no_weather_info_available;
+				@SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusFetcher().getCurrentLocationStatus(getActivity());
+
+				switch (locationStatus) {
+					case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+						message = R.string.empty_forecast_list_server_down;
+						break;
+					case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+						message = R.string.empty_forecast_list_server_error;
+						break;
+					default:
+
+						ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+						NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+						if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()){
+							message = R.string.no_network_available;
+						}
+				}
+
+
+
+
+				emptyView.setText(message);
+			}
+		}
+	}
 
 	@Override
 	public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
@@ -251,5 +295,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 	public void setUseTodayLayout(boolean useTodayLayout) {
 		listViewAdapter.setUseTodayLayout(useTodayLayout);
+	}
+
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if ( key.equals(getString(R.string.location_status_pref_key)) ) {
+			updateEmptyViewStatusText();
+		}
 	}
 }
