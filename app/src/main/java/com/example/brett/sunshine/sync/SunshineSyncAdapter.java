@@ -25,6 +25,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.example.brett.sunshine.ListViewItemFormatHelper;
+import com.example.brett.sunshine.LocationStatusPreferenceManager;
 import com.example.brett.sunshine.MainActivity;
 import com.example.brett.sunshine.NotificationPreferenceFetcher;
 import com.example.brett.sunshine.PreferredLocationFetcher;
@@ -50,7 +51,7 @@ import java.util.Vector;
 
 public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 
-	@IntDef({LOCATION_STATUS_OK,LOCATION_STATUS_SERVER_DOWN,LOCATION_STATUS_SERVER_INVALID,LOCATION_STATUS_UNKNOWN })
+	@IntDef({LOCATION_STATUS_OK,LOCATION_STATUS_SERVER_DOWN,LOCATION_STATUS_SERVER_INVALID,LOCATION_STATUS_UNKNOWN,LOCATION_STATUS_INVALID })
 	@Retention(RetentionPolicy.SOURCE)
 	public @interface LocationStatus{}
 
@@ -59,6 +60,7 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 	public static final int LOCATION_STATUS_SERVER_DOWN = 1;
 	public static final int LOCATION_STATUS_SERVER_INVALID = 2;
 	public static final int LOCATION_STATUS_UNKNOWN = 3;
+	public static final int LOCATION_STATUS_INVALID = 4;
 
 	private final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
 
@@ -120,6 +122,14 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.connect();
+
+
+			int responseCode = urlConnection.getResponseCode();
+
+			if(responseCode == 404){
+				new LocationStatusPreferenceManager().setCurrentStatusToLocationInvalid(getContext());
+				return;
+			}
 
 			// Read the input stream into a String
 			InputStream inputStream = urlConnection.getInputStream();

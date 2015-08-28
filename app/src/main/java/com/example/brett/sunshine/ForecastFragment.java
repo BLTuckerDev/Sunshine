@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -28,8 +27,6 @@ import android.widget.TextView;
 import com.example.brett.sunshine.data.WeatherContract;
 import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 import static com.example.brett.sunshine.data.WeatherContract.WeatherEntry;
@@ -261,7 +258,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
 				int message = R.string.no_weather_info_available;
-				@SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusFetcher().getCurrentLocationStatus(getActivity());
+				@SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusPreferenceManager().getCurrentLocationStatus(getActivity());
 
 				switch (locationStatus) {
 					case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
@@ -269,6 +266,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 						break;
 					case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
 						message = R.string.empty_forecast_list_server_error;
+						break;
+					case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+						message = R.string.invalid_location_message;
 						break;
 					default:
 

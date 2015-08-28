@@ -63,5 +63,6 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
     <string name="location_status_pref_key">location_status</string>
     <string name="empty_forecast_list_server_down">The weather service is currently down.</string>
     <string name="empty_forecast_list_server_error">Please update your app to see your weather information.</string>
+    <string name="invalid_location_message">Please update your location preference with a valid location.</string>
 
 </resources>
