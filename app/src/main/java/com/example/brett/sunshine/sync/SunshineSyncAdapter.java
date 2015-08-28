@@ -100,6 +100,7 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 		// Will contain the raw JSON response as a string.
 		String forecastJsonStr = null;
 
+
 		try {
 			Uri.Builder uriBuilder = new Uri.Builder();
 			uriBuilder.scheme("http")
@@ -124,12 +125,6 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 			urlConnection.connect();
 
 
-			int responseCode = urlConnection.getResponseCode();
-
-			if(responseCode == 404){
-				new LocationStatusPreferenceManager().setCurrentStatusToLocationInvalid(getContext());
-				return;
-			}
 
 			// Read the input stream into a String
 			InputStream inputStream = urlConnection.getInputStream();
@@ -360,7 +355,28 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 		final String OWM_DESCRIPTION = "main";
 		final String OWM_WEATHER_ID = "id";
 
+
+        final String OWM_MESSAGE_CODE = "cod";
+
 		JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+
+        if(forecastJson.has(OWM_MESSAGE_CODE)){
+            int errorCode = forecastJson.getInt(OWM_MESSAGE_CODE);
+
+            switch(errorCode){
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    new LocationStatusPreferenceManager().setCurrentStatusToLocationInvalid(getContext());
+                    return;
+                default:
+                    new LocationStatusPreferenceManager().setCurrentLocationStatusToServerDown(getContext());
+                    return;
+            }
+        }
+
+
 		JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
 		JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
