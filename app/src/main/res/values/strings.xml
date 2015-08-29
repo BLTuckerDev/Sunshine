@@ -65,4 +65,8 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
     <string name="empty_forecast_list_server_error">Please update your app to see your weather information.</string>
     <string name="invalid_location_message">Please update your location preference with a valid location.</string>
 
+
+    <string name="pref_location_error_description">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_unknown_description">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+
 </resources>
