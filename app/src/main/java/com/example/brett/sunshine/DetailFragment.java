@@ -136,27 +136,45 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 			int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
 			int resourceId = helper.getArtResourceForWeatherCondition(weatherId);
+
+            String localizedDescription = WeatherIdStringConverter.getConverter().getStringForWeatherCondition(getActivity(), weatherId);
+
 			imageView.setImageResource(resourceId);
+            imageView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
 
 			boolean isMetric = helper.isMetric(getActivity());
 
 			dateTextView.setText(helper.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
 
-			String localizedDescription = WeatherIdStringConverter.getConverter().getStringForWeatherCondition(getActivity(), weatherId);
-			descriptionTextView.setText(localizedDescription);
 
-			highTextView.setText(helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), isMetric ));
-			lowTextView.setText(helper.formatTemperature(getActivity(),data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), isMetric));
-			humidityTextView.setText(getString(R.string.format_humidity, data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY))));
+			descriptionTextView.setText(localizedDescription);
+            descriptionTextView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
+
+            String highTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), isMetric);
+			highTextView.setText(highTemp);
+            highTextView.setContentDescription(getString(R.string.a11y_high_temp, highTemp));
+
+
+            String lowTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), isMetric);
+			lowTextView.setText(lowTemp);
+            lowTextView.setContentDescription(getString(R.string.a11y_low_temp, lowTemp));
+
+            String humidity = getString(R.string.format_humidity, data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY)));
+			humidityTextView.setText(humidity);
+            humidityTextView.setContentDescription(humidity);
 
 			float windSpeed = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
 			float windDirection = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
 
-			windTextView.setText(helper.getFormattedWind(getActivity(), windSpeed, windDirection));
+            String wind = helper.getFormattedWind(getActivity(), windSpeed, windDirection);
+			windTextView.setText(wind);
+            windTextView.setContentDescription(wind);
 
 			float pressure = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE));
 
-			pressureTextView.setText(getString(R.string.format_pressure, pressure));
+            String pressureString = getString(R.string.format_pressure, pressure);
+			pressureTextView.setText(pressureString);
+            pressureTextView.setContentDescription(pressureString);
 
 			compass.setWindSpeed(windSpeed);
 			compass.setWindDirection(windDirection);
