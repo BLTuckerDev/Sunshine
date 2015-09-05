@@ -71,7 +71,7 @@ public final class ForecastAdapter extends CursorAdapter {
 		viewHolder.dateView.setText(formatHelper.getFriendlyDayString(context, cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
 
 
-		String descriptionString = cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC));
+		String descriptionString = WeatherIdStringConverter.getConverter().getStringForWeatherCondition(context, weatherId);
 		viewHolder.descriptionView.setText(descriptionString);
 
 
