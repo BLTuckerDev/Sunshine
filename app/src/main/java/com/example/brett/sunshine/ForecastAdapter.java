@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.brett.sunshine.data.WeatherContract;
 
 
@@ -71,7 +72,7 @@ public final class ForecastAdapter extends CursorAdapter {
 		viewHolder.dateView.setText(formatHelper.getFriendlyDayString(context, cursor.getString(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
 
 
-		String descriptionString = WeatherIdStringConverter.getConverter().getStringForWeatherCondition(context, weatherId);
+		String descriptionString = WeatherResourceConverter.getConverter().getStringForWeatherCondition(context, weatherId);
 		viewHolder.descriptionView.setText(descriptionString);
 		viewHolder.descriptionView.setContentDescription(context.getString(R.string.a11y_forecast, descriptionString));
 
@@ -91,17 +92,23 @@ public final class ForecastAdapter extends CursorAdapter {
 	private void bindIcon(ForecastListItemViewHolder viewHolder, int weatherId, int position){
 
 		int viewType = getItemViewType(position);
-		ListViewItemFormatHelper formatHelper = new ListViewItemFormatHelper();
+        int fallbackIconId;
 
 		switch(viewType){
 			case VIEW_TYPE_FUTURE_DAY:
-				viewHolder.iconView.setImageResource(formatHelper.getIconResourceForWeatherCondition(weatherId));
-
+                fallbackIconId = WeatherResourceConverter.getConverter().getArtResourceForWeatherCondition(weatherId);
 				break;
-			case VIEW_TYPE_TODAY:
-				viewHolder.iconView.setImageResource(formatHelper.getArtResourceForWeatherCondition(weatherId));
+            default:
+                fallbackIconId = WeatherResourceConverter.getConverter().getIconResourceForWeatherCondition(weatherId);
 				break;
 		}
+
+        Glide.with(mContext)
+                .load(WeatherResourceConverter.getConverter().getArtUrlForWeatherCondition(mContext, weatherId))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(viewHolder.iconView);
+
 	}
 
 }

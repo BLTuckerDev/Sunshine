@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.brett.sunshine.data.WeatherContract;
 
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -133,13 +134,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		if(data.moveToFirst()){
 
 			ListViewItemFormatHelper helper = new ListViewItemFormatHelper();
-
 			int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
-			int resourceId = helper.getArtResourceForWeatherCondition(weatherId);
+            String localizedDescription = WeatherResourceConverter.getConverter().getStringForWeatherCondition(getActivity(), weatherId);
 
-            String localizedDescription = WeatherIdStringConverter.getConverter().getStringForWeatherCondition(getActivity(), weatherId);
+            Glide.with(this)
+                    .load(WeatherResourceConverter.getConverter().getArtUrlForWeatherCondition(getActivity(), weatherId))
+                    .error(WeatherResourceConverter.getConverter().getArtResourceForWeatherCondition(weatherId))
+                    .crossFade()
+                    .into(imageView);
 
-			imageView.setImageResource(resourceId);
             imageView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
 
 			boolean isMetric = helper.isMetric(getActivity());
