@@ -1,83 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.brett.sunshine" >
+<manifest package="com.example.brett.sunshine"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- Permissions required by the sync adapter -->
     <uses-permission
-            android:name="android.permission.READ_SYNC_SETTINGS"/>
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission
-            android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission
-            android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- allows us to receive messages -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+
+
+    <!-- custom permission to make sure only our app can get our messages, GCM tutorial just says you must do this to receive -->
+    <permission
+        android:name="com.example.brett.sunshine.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"/>
+
+    <!-- use our custom permission -->
+    <uses-permission android:name="com.example.brett.sunshine.permission.C2D_MESSAGE"/>
+
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:theme="@style/ForecastTheme"
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/ForecastTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/AppTheme"
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.brett.sunshine.MainActivity" />
+                android:value="com.example.brett.sunshine.MainActivity"/>
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings">
 
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.example.brett.sunshine.MainActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.brett.sunshine.MainActivity"/>
 
         </activity>
+
         <provider
-                android:authorities="@string/content_authority"
-                android:name=".data.WeatherProvider"
-                android:exported="false"
-                android:syncable="true"
-                />
+            android:name=".data.WeatherProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true"
+            />
 
 
         <service
-                android:name=".sync.SunshineAuthenticatorService"
-                >
+            android:name=".sync.SunshineAuthenticatorService"
+            >
             <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
+                <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
             <meta-data
-                    android:name="android.accounts.AccountAuthenticator"
-                    android:resource="@xml/authenticator" />
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator"/>
         </service>
 
         <service
-                android:name=".sync.SunshineSyncService"
-                android:exported="true"     >
-        <intent-filter>
-            <action android:name="android.content.SyncAdapter" />
-        </intent-filter>
-        <meta-data
+            android:name=".sync.SunshineSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                android:resource="@xml/syncadapter"/>
         </service>
 
+
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <category android:name="com.example.brett.sunshine"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 
