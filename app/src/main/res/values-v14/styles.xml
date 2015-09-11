@@ -9,7 +9,7 @@
     <!-- ActionBar style -->
     <style name="ActionBar.Solid.Sunshine"
            parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/sunshine_blue</item>
+        <item name="android:background">@color/primary</item>
     </style>
 
     <!-- Main activity theme -->
