@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragmentC
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 		if(findViewById(R.id.weather_detail_container) != null){
 			isTwoPaneMode = true;
