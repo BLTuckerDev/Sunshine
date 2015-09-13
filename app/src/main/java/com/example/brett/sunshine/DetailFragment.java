@@ -36,7 +36,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private ImageView imageView;
 
 	private TextView dateTextView;
-	private TextView descriptionTextView;
 
 	private TextView highTextView;
 	private TextView lowTextView;
@@ -49,8 +48,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView windLabelView;
     private TextView pressureLabelView;
 
-
-	private MyView compass;
 
 	public DetailFragment(){
 		this.setHasOptionsMenu(true);
@@ -77,19 +74,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-		imageView = (ImageView) rootView.findViewById(R.id.forecast_detail_icon);
+		imageView = (ImageView) rootView.findViewById(R.id.detail_icon);
 
-		compass = (MyView) rootView.findViewById(R.id.forecast_detail_compass);
 
-		dateTextView = (TextView) rootView.findViewById(R.id.forecast_detail_date);
-		descriptionTextView = (TextView) rootView.findViewById(R.id.forecast_detail_description);
+		dateTextView = (TextView) rootView.findViewById(R.id.detail_date_textview);
 
-		highTextView = (TextView) rootView.findViewById(R.id.forecast_detail_high);
-		lowTextView = (TextView) rootView.findViewById(R.id.forecast_detail_low);
+		highTextView = (TextView) rootView.findViewById(R.id.detail_high_textview);
+		lowTextView = (TextView) rootView.findViewById(R.id.detail_low_textview);
 
-		humidityTextView = (TextView) rootView.findViewById(R.id.forecast_detail_humidity);
-		windTextView = (TextView) rootView.findViewById(R.id.forecast_detail_wind);
-		pressureTextView = (TextView) rootView.findViewById(R.id.forecast_detail_pressure);
+		humidityTextView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+		windTextView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+		pressureTextView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
 
         humidityLabelView = (TextView) rootView.findViewById(R.id.detail_humidity_label_textview);
         windLabelView = (TextView) rootView.findViewById(R.id.detail_wind_label_textview);
@@ -174,9 +169,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             dateTextView.setText(helper.getFullFriendlyDayString(getActivity(), data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
 
 
-            descriptionTextView.setText(localizedDescription);
-            descriptionTextView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
-
             String highTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), isMetric);
             highTextView.setText(highTemp);
             highTextView.setContentDescription(getString(R.string.a11y_high_temp, highTemp));
@@ -205,9 +197,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             pressureTextView.setText(pressureString);
             pressureTextView.setContentDescription(pressureString);
             pressureLabelView.setContentDescription(pressureString);
-
-            compass.setWindSpeed(windSpeed);
-            compass.setWindDirection(windDirection);
 
         }
 
