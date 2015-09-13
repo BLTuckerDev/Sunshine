@@ -1,19 +1,22 @@
 package com.example.brett.sunshine;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -42,6 +45,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private TextView windTextView;
 	private TextView pressureTextView;
 
+    private TextView humidityLabelView;
+    private TextView windLabelView;
+    private TextView pressureLabelView;
+
+
 	private MyView compass;
 
 	public DetailFragment(){
@@ -50,9 +58,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-//		ShareActionProvider provider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share_weather));
-//		provider.setShareIntent(getShareIntent());
+        if ( getActivity() instanceof DetailActivity ){
+            // Inflate the menu; this adds items to the action bar if it is present.
+            inflater.inflate(R.menu.menu_detail, menu);
+            finishCreatingMenu(menu);
+        }
 	}
 
 
@@ -64,8 +74,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
 		imageView = (ImageView) rootView.findViewById(R.id.forecast_detail_icon);
@@ -82,6 +91,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 		windTextView = (TextView) rootView.findViewById(R.id.forecast_detail_wind);
 		pressureTextView = (TextView) rootView.findViewById(R.id.forecast_detail_pressure);
 
+        humidityLabelView = (TextView) rootView.findViewById(R.id.detail_humidity_label_textview);
+        windLabelView = (TextView) rootView.findViewById(R.id.detail_wind_label_textview);
+        pressureLabelView = (TextView) rootView.findViewById(R.id.detail_pressure_label_textview);
 
 		Bundle args = getArguments();
 
@@ -92,6 +104,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 		return rootView;
 	}
+
+    private void finishCreatingMenu(Menu menu){
+        MenuItem menuItem = menu.findItem(R.id.action_share_weather);
+        menuItem.setIntent(getShareIntent());
+    }
 
 
 	private Intent getShareIntent(){
@@ -104,6 +121,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 		return shareIntent;
 	}
+
+
 
 
 	@Override
@@ -123,18 +142,23 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 				null, //FORECAST_COLUMNS,
 				null,
 				null,
-				sortOrder
-		);
+				sortOrder);
 	}
 
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+		populateWithWeatherData(data);
+        startPostponedTransition();
+	}
 
-		if(data.moveToFirst()){
 
-			ListViewItemFormatHelper helper = new ListViewItemFormatHelper();
-			int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
+    private void populateWithWeatherData(Cursor data){
+
+        if(data.moveToFirst()){
+
+            WeatherFormatHelper helper = new WeatherFormatHelper();
+            int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
             String localizedDescription = WeatherResourceConverter.getConverter().getStringForWeatherCondition(getActivity(), weatherId);
 
             Glide.with(this)
@@ -145,53 +169,98 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             imageView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
 
-			boolean isMetric = helper.isMetric(getActivity());
+            boolean isMetric = helper.isMetric(getActivity());
 
-			dateTextView.setText(helper.formatDate(data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
+            dateTextView.setText(helper.getFullFriendlyDayString(getActivity(), data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
 
 
-			descriptionTextView.setText(localizedDescription);
+            descriptionTextView.setText(localizedDescription);
             descriptionTextView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
 
             String highTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), isMetric);
-			highTextView.setText(highTemp);
+            highTextView.setText(highTemp);
             highTextView.setContentDescription(getString(R.string.a11y_high_temp, highTemp));
 
 
             String lowTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), isMetric);
-			lowTextView.setText(lowTemp);
+            lowTextView.setText(lowTemp);
             lowTextView.setContentDescription(getString(R.string.a11y_low_temp, lowTemp));
 
             String humidity = getString(R.string.format_humidity, data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_HUMIDITY)));
-			humidityTextView.setText(humidity);
+            humidityTextView.setText(humidity);
             humidityTextView.setContentDescription(humidity);
+            humidityLabelView.setContentDescription(humidity);
 
-			float windSpeed = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
-			float windDirection = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
+            float windSpeed = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
+            float windDirection = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
 
             String wind = helper.getFormattedWind(getActivity(), windSpeed, windDirection);
-			windTextView.setText(wind);
+            windTextView.setText(wind);
             windTextView.setContentDescription(wind);
+            windLabelView.setContentDescription(wind);
 
-			float pressure = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE));
+            float pressure = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_PRESSURE));
 
             String pressureString = getString(R.string.format_pressure, pressure);
-			pressureTextView.setText(pressureString);
+            pressureTextView.setText(pressureString);
             pressureTextView.setContentDescription(pressureString);
+            pressureLabelView.setContentDescription(pressureString);
 
-			compass.setWindSpeed(windSpeed);
-			compass.setWindDirection(windDirection);
+            compass.setWindSpeed(windSpeed);
+            compass.setWindDirection(windDirection);
 
-		}
-
-
+        }
 
 
-	}
+    }
 
+
+    private void startPostponedTransition(){
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
+
+        if(activity instanceof DetailActivity){
+
+            activity.supportStartPostponedEnterTransition();
+
+            if(null != toolbar){
+
+                activity.setSupportActionBar(toolbar);
+
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+
+        } else {
+
+            if(null != toolbar){
+                Menu menu = toolbar.getMenu();
+
+                if ( null != menu ) {
+                    menu.clear();
+                }
+
+                toolbar.inflateMenu(R.menu.menu_detail);
+                finishCreatingMenu(menu);
+            }
+
+        }
+
+
+
+    }
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-
 	}
+
+
+    private boolean isUsingLocalGraphics() {
+        Context context = getActivity();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String sunshineArtPack = context.getString(R.string.pref_art_pack_sunshine);
+        return prefs.getString(context.getString(R.string.pref_art_pack_key), sunshineArtPack).equals(sunshineArtPack);
+    }
+
 }

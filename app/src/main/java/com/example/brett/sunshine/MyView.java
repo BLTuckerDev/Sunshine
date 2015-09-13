@@ -5,12 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.v4.view.accessibility.AccessibilityManagerCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityEventSource;
 import android.view.accessibility.AccessibilityManager;
 
 public final class MyView extends View{
@@ -91,7 +88,7 @@ public final class MyView extends View{
 		float centerY = getMeasuredHeight() / 2;
 		int radius = (getMeasuredWidth() / 2) - 20;
 
-		ListViewItemFormatHelper helper = new ListViewItemFormatHelper();
+		WeatherFormatHelper helper = new WeatherFormatHelper();
 
 		final String units = helper.isMetric(this.getContext()) ? " kph" : " mph";
 
@@ -189,7 +186,7 @@ public final class MyView extends View{
 
 	@Override
 	public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-		ListViewItemFormatHelper helper = new ListViewItemFormatHelper();
+		WeatherFormatHelper helper = new WeatherFormatHelper();
 		event.getText().add(helper.getFormattedWind(this.getContext(), (float)this.windSpeed, (float)this.windDirection));
 		return true;
 	}

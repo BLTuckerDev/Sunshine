@@ -8,8 +8,8 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="pref_location_title">Location</string>
-    <string name="pref_location_key" translatable="false" >location_preference</string>
-    <string name="pref_location_default" translatable="false" >84720</string>
+    <string name="pref_location_key" translatable="false">location_preference</string>
+    <string name="pref_location_default" translatable="false">84720</string>
     <string name="pref_units_title">Temperature Units</string>
     <string name="pref_units_key">units</string>
     <string name="pref_units_default">metric</string>
@@ -25,24 +25,22 @@
     </string>
 
     <string name="format_temperature"><xliff:g id="temp">%1.0f</xliff:g>\u00B0</string>
-    <string name="Humidity">Humidity:</string>
-    <string name="Wind">Wind:</string>
-    <string name="pressure">Pressure:</string>
+    <string name="Humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
 
 
-    <string name="format_wind_mph">Wind: <xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g>
-</string>
+    <string name="format_wind_mph"><xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g></string>
+
 
     <!-- Wind in kph [CHAR LIMIT=25] -->
-<string name="format_wind_kmh">
-    Wind: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g>
-</string>
+    <string name="format_wind_kmh"><xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g></string>
 
     <!-- Pressure format CHAR LIMIT=25] -->
-    <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
+    <string name="format_pressure"><xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
 
     <!-- Humidity format CHAR LIMIT=25]-->
-    <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
+    <string name="format_humidity"><xliff:g id="humidity">%1.0f</xliff:g> %%</string>
 
     <string name="sync_account_type">sunshine.brett.example.com</string>
     <string name="content_authority">com.example.brett.sunshine</string>
@@ -70,7 +68,6 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
     <string name="pref_location_unknown_description">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
 
 
-
     <!-- Weather Conditions -->
     <string name="condition_2xx">Storm</string>
     <string name="condition_3xx">Drizzle</string>
@@ -89,11 +86,14 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
     <string name="condition_602">Heavy Snow</string>
     <string name="condition_611">Sleet</string>
     <string name="condition_612">Shower Sleet</string>
-    <string name="condition_615">Rain and Snow</string> <!-- light rain and snow -->
+    <string name="condition_615">Rain and Snow</string>
+    <!-- light rain and snow -->
     <string name="condition_616">Rain and Snow</string>
-    <string name="condition_620">Shower Snow</string> <!-- light shower snow -->
+    <string name="condition_620">Shower Snow</string>
+    <!-- light shower snow -->
     <string name="condition_621">Shower Snow</string>
-    <string name="condition_622">Shower Snow</string> <!-- heavy shower snow -->
+    <string name="condition_622">Shower Snow</string>
+    <!-- heavy shower snow -->
     <string name="condition_701">Mist</string>
     <string name="condition_711">Smoke</string>
     <string name="condition_721">Haze</string>
@@ -119,7 +119,8 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
     <string name="condition_951">Calm</string>
     <string name="condition_952">Light Breeze</string>
     <string name="condition_953">Gentle Breeze</string>
-    <string name="condition_954">Breeze</string> <!-- moderate breeze -->
+    <string name="condition_954">Breeze</string>
+    <!-- moderate breeze -->
     <string name="condition_955">Fresh Breeze</string>
     <string name="condition_956">Strong Breeze</string>
     <string name="condition_957">High Wind</string>
@@ -133,10 +134,14 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
 
 
     <!-- A11y -->
-   <string name="a11y_forecast">Forecast: <xliff:g id="condition">%1$s</xliff:g></string>
-   <string name="a11y_forecast_icon">Forecast icon: <xliff:g id="condition">%1$s</xliff:g></string>
-   <string name="a11y_high_temp">High: <xliff:g id="high">%1$s</xliff:g></string>
-   <string name="a11y_low_temp">Low: <xliff:g id="low">%1$s</xliff:g></string>
+    <string name="a11y_forecast">Forecast: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_forecast_icon">Forecast icon: <xliff:g id="condition">%1$s</xliff:g></string>
+    <string name="a11y_high_temp">High: <xliff:g id="high">%1$s</xliff:g></string>
+    <string name="a11y_low_temp">Low: <xliff:g id="low">%1$s</xliff:g></string>
+    <string name="a11y_humidity">Humidity: <xliff:g id="humidity">%1$s</xliff:g></string>
+    <string name="a11y_pressure">Barometric Pressure: <xliff:g id="pressure">%1$s</xliff:g></string>
+    <string name="a11y_wind">Wind speed and direction: <xliff:g id="wind">%1$s</xliff:g></string>
+
 
     <string name="pref_art_pack_label">Icon Pack</string>
     <string name="pref_art_pack_label_sunshine">Sunshine</string>

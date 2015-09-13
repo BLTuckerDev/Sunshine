@@ -29,7 +29,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
-import com.example.brett.sunshine.ListViewItemFormatHelper;
+import com.example.brett.sunshine.WeatherFormatHelper;
 import com.example.brett.sunshine.LocationStatusPreferenceManager;
 import com.example.brett.sunshine.MainActivity;
 import com.example.brett.sunshine.NotificationPreferenceFetcher;
@@ -244,7 +244,7 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 				double low = cursor.getDouble(INDEX_MIN_TEMP);
 				String desc = cursor.getString(INDEX_SHORT_DESC);
 
-				ListViewItemFormatHelper formatHelper = new ListViewItemFormatHelper();
+				WeatherFormatHelper formatHelper = new WeatherFormatHelper();
 
 				int iconId = WeatherResourceConverter.getConverter().getIconResourceForWeatherCondition(weatherId);
                 int artResourceId = WeatherResourceConverter.getConverter().getArtResourceForWeatherCondition(weatherId);

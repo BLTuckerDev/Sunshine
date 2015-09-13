@@ -6,8 +6,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.brett.sunshine.data.WeatherContract;
@@ -63,7 +61,7 @@ public final class ForecastAdapter extends CursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 
 		ForecastListItemViewHolder viewHolder = (ForecastListItemViewHolder) view.getTag();
-		ListViewItemFormatHelper formatHelper = new ListViewItemFormatHelper();
+		WeatherFormatHelper formatHelper = new WeatherFormatHelper();
 
 		int weatherId = cursor.getInt(cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
 		this.bindIcon(viewHolder, weatherId, cursor.getPosition());

@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public final class ListViewItemFormatHelper {
+public final class WeatherFormatHelper {
 
 	public static final String DATE_FORMAT = "yyyyMMdd";
 
@@ -67,6 +67,14 @@ public final class ListViewItemFormatHelper {
 		return context.getString(R.string.format_temperature, temp);
 	}
 
+	public String getFullFriendlyDayString(Context context, String dateInMilliseconds){
+
+		String dayName = getDayName(context, dateInMilliseconds);
+		int formatId = R.string.format_full_friendly_date;
+		return String.format(context.getString(formatId, dayName, getFormattedMonthDay(context, dateInMilliseconds)));
+
+	}
+
 	public String getFriendlyDayString(Context context, String dateStr) {
 		// The day string for forecast uses the following logic:
 		// For today: "Today, June 8"
@@ -104,7 +112,7 @@ public final class ListViewItemFormatHelper {
 	}
 
 	public String getDayName(Context context, String dateStr) {
-		SimpleDateFormat dbDateFormat = new SimpleDateFormat(ListViewItemFormatHelper.DATE_FORMAT);
+		SimpleDateFormat dbDateFormat = new SimpleDateFormat(WeatherFormatHelper.DATE_FORMAT);
 		try {
 			Date inputDate = dbDateFormat.parse(dateStr);
 			Date todayDate = new Date();
@@ -135,7 +143,7 @@ public final class ListViewItemFormatHelper {
 	}
 
 	public String getFormattedMonthDay(Context context, String dateStr) {
-		SimpleDateFormat dbDateFormat = new SimpleDateFormat(ListViewItemFormatHelper.DATE_FORMAT);
+		SimpleDateFormat dbDateFormat = new SimpleDateFormat(WeatherFormatHelper.DATE_FORMAT);
 		try {
 			Date inputDate = dbDateFormat.parse(dateStr);
 			SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");

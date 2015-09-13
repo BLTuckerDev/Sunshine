@@ -7,12 +7,7 @@
     <item
         android:id="@+id/action_share_weather"
         android:title="@string/share_weather"
-        android:icon="@android:drawable/ic_menu_share"
-        app:showAsAction="ifRoom"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+        android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+        app:showAsAction="always" />
 
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          android:orderInCategory="100"
-          app:showAsAction="never"/>
 </menu>
