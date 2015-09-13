@@ -36,6 +36,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 	private ImageView imageView;
 
 	private TextView dateTextView;
+    private TextView forecastTextView;
 
 	private TextView highTextView;
 	private TextView lowTextView;
@@ -78,6 +79,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
 		dateTextView = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        forecastTextView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
 
 		highTextView = (TextView) rootView.findViewById(R.id.detail_high_textview);
 		lowTextView = (TextView) rootView.findViewById(R.id.detail_low_textview);
@@ -167,7 +169,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             boolean isMetric = helper.isMetric(getActivity());
 
             dateTextView.setText(helper.getFullFriendlyDayString(getActivity(), data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
-
+            forecastTextView.setText(localizedDescription);
+            forecastTextView.setContentDescription(getString(R.string.a11y_forecast, localizedDescription));
 
             String highTemp = helper.formatTemperature(getActivity(), data.getDouble(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP)), isMetric);
             highTextView.setText(highTemp);

@@ -13,11 +13,11 @@ public final class ForecastListItemViewHolder {
 	public final TextView lowView;
 
 	public ForecastListItemViewHolder(View parentView){
-		iconView = (ImageView) parentView.findViewById(R.id.forecast_list_item_icon);
-		dateView = (TextView) parentView.findViewById(R.id.forecast_list_item_date);
-		descriptionView = (TextView) parentView.findViewById(R.id.forecast_list_item_description);
-		highView = (TextView) parentView.findViewById(R.id.forecast_list_item_high);
-		lowView = (TextView) parentView.findViewById(R.id.forecast_list_item_low);
+		iconView = (ImageView) parentView.findViewById(R.id.list_item_icon);
+		dateView = (TextView) parentView.findViewById(R.id.list_item_date_textview);
+		descriptionView = (TextView) parentView.findViewById(R.id.list_item_forecast_textview);
+		highView = (TextView) parentView.findViewById(R.id.list_item_high_textview);
+		lowView = (TextView) parentView.findViewById(R.id.list_item_low_textview);
 	}
 
 
