@@ -73,7 +73,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
 
 		imageView = (ImageView) rootView.findViewById(R.id.detail_icon);
 
@@ -153,6 +153,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private void populateWithWeatherData(Cursor data){
 
         if(data.moveToFirst()){
+
+            getView().setVisibility(View.VISIBLE);
 
             WeatherFormatHelper helper = new WeatherFormatHelper();
             int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
