@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -154,7 +156,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         if(data.moveToFirst()){
 
-            getView().setVisibility(View.VISIBLE);
+            ViewParent viewParent = getView().getParent();
+            if(viewParent instanceof CardView){
+                ((View)viewParent).setVisibility(View.VISIBLE);
+            }
 
             WeatherFormatHelper helper = new WeatherFormatHelper();
             int weatherId = data.getInt(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
