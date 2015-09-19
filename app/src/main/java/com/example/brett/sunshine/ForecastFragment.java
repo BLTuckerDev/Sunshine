@@ -67,7 +67,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     };
 
     public ForecastFragment() {
-        this.selectedPosition = 0;
+        this.selectedPosition = RecyclerView.NO_POSITION;
         this.setHasOptionsMenu(true);
     }
 
@@ -262,10 +262,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (selectedPosition != RecyclerView.NO_POSITION) {
             recyclerView.smoothScrollToPosition(selectedPosition);
             RecyclerView.ViewHolder selectedViewHolder = recyclerView.findViewHolderForAdapterPosition(selectedPosition);
-
-            if(selectedViewHolder != null && selectedViewHolder instanceof ForecastListItemViewHolder){
-                ((ForecastListItemViewHolder)selectedViewHolder).onClick(selectedViewHolder.itemView);
-            }
 
         }
         updateEmptyViewStatusText();
