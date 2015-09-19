@@ -17,13 +17,23 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
     private final static int VIEW_TYPE_TODAY = 0;
     private final static int VIEW_TYPE_FUTURE_DAY = 1;
 
+    public static interface ForecastAdapterOnClickHandler{
+        void onClick(int adapterPosition, ForecastListItemViewHolder viewHolder);
+    }
+
     private boolean useTodayLayout = false;
 
     private Cursor weatherCursor;
     private final Context context;
 
-    public ForecastAdapter(Context context) {
+    private final View emptyView;
+    private final ForecastAdapterOnClickHandler clickHandler;
+
+
+    public ForecastAdapter(Context context, ForecastAdapterOnClickHandler clickHandler, View emptyView) {
         this.context = context;
+        this.clickHandler = clickHandler;
+        this.emptyView = emptyView;
     }
 
 
@@ -50,7 +60,7 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(layoutId, viewGroup, false);
         view.setFocusable(true);
 
-        return new ForecastListItemViewHolder(view);
+        return new ForecastListItemViewHolder(view, clickHandler);
 
     }
 

@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public final class ForecastListItemViewHolder extends RecyclerView.ViewHolder {
+public final class ForecastListItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public final ImageView iconView;
     public final TextView dateView;
@@ -13,14 +13,24 @@ public final class ForecastListItemViewHolder extends RecyclerView.ViewHolder {
     public final TextView highView;
     public final TextView lowView;
 
-    public ForecastListItemViewHolder(View parentView) {
+    private ForecastAdapter.ForecastAdapterOnClickHandler clickHandler;
+
+    public ForecastListItemViewHolder(View parentView, ForecastAdapter.ForecastAdapterOnClickHandler clickHandler) {
         super(parentView);
+
+        this.clickHandler = clickHandler;
 
         iconView = (ImageView) parentView.findViewById(R.id.list_item_icon);
         dateView = (TextView) parentView.findViewById(R.id.list_item_date_textview);
         descriptionView = (TextView) parentView.findViewById(R.id.list_item_forecast_textview);
         highView = (TextView) parentView.findViewById(R.id.list_item_high_textview);
         lowView = (TextView) parentView.findViewById(R.id.list_item_low_textview);
+        parentView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        clickHandler.onClick(getAdapterPosition(), this);
     }
 
 }

@@ -32,13 +32,16 @@ import java.util.Date;
 import static com.example.brett.sunshine.data.WeatherContract.WeatherEntry;
 
 
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        ForecastAdapter.ForecastAdapterOnClickHandler {
 
     private static final int FORECAST_LOADER = 0;
     private String mLocation;
     private int selectedPosition;
 
     private RecyclerView recyclerView;
+    private View emptyView;
     private int position = RecyclerView.NO_POSITION;
 
     private ForecastAdapter forecastAdapter;
@@ -163,34 +166,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        forecastAdapter = new ForecastAdapter(getActivity());
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        emptyView = rootView.findViewById(R.id.recyclerview_forecast_empty);
+        forecastAdapter = new ForecastAdapter(getActivity(), this, emptyView);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_forecast);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(forecastAdapter);
-
-        // We'll call our MainActivity
-//        mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                // CursorAdapter returns a cursor at the correct position for getItem(), or null
-//                // if it cannot seek to that position.
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
-//                    String locationSetting = Utility.getPreferredLocation(getActivity());
-//                    ((Callback) getActivity())
-//                            .onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-//                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-//                            ));
-//                }
-//                mPosition = position;
-//            }
-//        });
-
-
 
         if (savedInstanceState != null && savedInstanceState.containsKey("position")) {
             selectedPosition = savedInstanceState.getInt("position");
@@ -247,11 +230,30 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
+    @Override
+    public void onClick(int adapterPosition, ForecastListItemViewHolder viewHolder) {
+
+        Cursor weatherCursor = forecastAdapter.getWeatherCursor();
+
+        if(null == weatherCursor) {
+            return;
+        }
+
+        weatherCursor.moveToPosition(adapterPosition);
+        Context context = getActivity();
+
+        if(null == context){
+            return;
+        }
+
+        String dateString = weatherCursor.getString(weatherCursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT));
+        this.listener.onItemSelected(dateString);
+
+    }
+
     private void updateEmptyViewStatusText() {
 
-        TextView emptyView = (TextView) getView().findViewById(R.id.recyclerview_forecast_empty);
-
-        if(null == emptyView){
+        if (null == emptyView) {
             return;
         }
 
@@ -259,29 +261,29 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (forecastAdapter.getItemCount() == 0) {
                 emptyView.setVisibility(View.VISIBLE);
 
-                int message = R.string.no_weather_info_available;
-                @SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusPreferenceManager().getCurrentLocationStatus(getActivity());
+            int message = R.string.no_weather_info_available;
+            @SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusPreferenceManager().getCurrentLocationStatus(getActivity());
 
-                switch (locationStatus) {
-                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
-                        message = R.string.empty_forecast_list_server_down;
-                        break;
-                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
-                        message = R.string.empty_forecast_list_server_error;
-                        break;
-                    case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
-                        message = R.string.invalid_location_message;
-                        break;
-                    default:
+            switch (locationStatus) {
+                case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                    message = R.string.empty_forecast_list_server_down;
+                    break;
+                case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                    message = R.string.empty_forecast_list_server_error;
+                    break;
+                case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                    message = R.string.invalid_location_message;
+                    break;
+                default:
 
-                        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-                        if (activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
-                            message = R.string.no_network_available;
-                        }
-                }
+                    ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                    if (activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+                        message = R.string.no_network_available;
+                    }
+            }
 
-                emptyView.setText(message);
+            ((TextView)emptyView).setText(message);
         } else {
             //count is not 0
             emptyView.setVisibility(View.GONE);
