@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -260,7 +262,10 @@ public class MainActivity extends AppCompatActivity implements ForecastFragmentC
 		} else {
 			Intent explicitIntent = new Intent(this, DetailActivity.class);
 			explicitIntent.putExtra(DetailActivity.IntentExtras.ForecastDate, date);
-			startActivity(explicitIntent);
+
+            ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+            ActivityCompat.startActivity(this, explicitIntent, activityOptions.toBundle());
+
 		}
 	}
 }
