@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -164,6 +165,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(null != recyclerView){
+            recyclerView.clearOnScrollListeners();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -179,9 +188,36 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             selectedPosition = savedInstanceState.getInt("position");
         }
 
+
+        final View parallaxBar = rootView.findViewById(R.id.parallax_bar);
+
+        if(null != parallaxBar && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    int max = parallaxBar.getHeight();
+
+                    if(dy > 0){
+                        parallaxBar.setTranslationY(Math.max(-max, parallaxBar.getTranslationY() - dy / 2));
+                    } else {
+                        parallaxBar.setTranslationY(Math.min(0, parallaxBar.getTranslationY() - dy / 2));
+                    }
+
+                }
+            });
+
+
+
+        }
+
+
+
         return rootView;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
