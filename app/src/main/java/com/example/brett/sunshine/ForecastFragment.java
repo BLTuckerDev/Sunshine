@@ -1,5 +1,6 @@
 package com.example.brett.sunshine;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +14,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -220,9 +223,25 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             });
 
-
         }
 
+        final AppBarLayout appbarView = (AppBarLayout) rootView.findViewById(R.id.appbar);
+        if (null != appbarView) {
+            ViewCompat.setElevation(appbarView, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        if (0 == recyclerView.computeVerticalScrollOffset()) {
+                            appbarView.setElevation(0);
+                        } else {
+                            appbarView.setElevation(appbarView.getTargetElevation());
+                        }
+                    }
+                });
+            }
+        }
 
         return rootView;
     }
@@ -273,7 +292,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
 
-        if(data.getCount() == 0){
+        if (data.getCount() == 0) {
             getActivity().supportStartPostponedEnterTransition();
         } else {
 
@@ -284,7 +303,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     // we see Children.
                     if (recyclerView.getChildCount() > 0) {
 
-                        if ( holdForTransition ) {
+                        if (holdForTransition) {
                             getActivity().supportStartPostponedEnterTransition();
                         }
                         return true;
