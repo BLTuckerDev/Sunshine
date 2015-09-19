@@ -2,6 +2,7 @@ package com.example.brett.sunshine;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +92,8 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
         String lowString = formatHelper.formatTemperature(context, weatherCursor.getDouble(weatherCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), isMetric);
         viewHolder.lowView.setText(lowString);
         viewHolder.lowView.setContentDescription(context.getString(R.string.a11y_low_temp, lowString));
+
+        ViewCompat.setTransitionName(viewHolder.iconView, "iconView" + position);
 
         if (position == clickHandler.getSelectedPosition()) {
             viewHolder.onClick(viewHolder.itemView);

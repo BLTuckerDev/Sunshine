@@ -8,31 +8,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class DetailActivity extends AppCompatActivity  {
+public class DetailActivity extends AppCompatActivity {
 
-	public static class IntentExtras {
-		public static final String ForecastDate = "forecastDate";
-	}
-
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_detail);
+    public static class IntentExtras {
+        public static final String ForecastDate = "forecastDate";
+    }
 
 
-		if (savedInstanceState == null) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail);
 
-			DetailFragment df = new DetailFragment();
-			Bundle args = new Bundle();
-			args.putString(DetailActivity.IntentExtras.ForecastDate, getIntent().getExtras().getString(IntentExtras.ForecastDate));
-			df.setArguments(args);
 
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.weather_detail_container,df)
-					.commit();
-		}
+        if (savedInstanceState == null) {
 
-	}
+            DetailFragment df = new DetailFragment();
+            Bundle args = new Bundle();
+            args.putString(DetailActivity.IntentExtras.ForecastDate, getIntent().getExtras().getString(IntentExtras.ForecastDate));
+            args.putBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, true);
+                    df.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.weather_detail_container, df)
+                    .commit();
+
+            supportPostponeEnterTransition();
+        }
+
+    }
 
 }

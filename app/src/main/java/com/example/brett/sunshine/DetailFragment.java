@@ -31,6 +31,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 	private static final int FORECAST_LOADER = 0;
 
+    static final String DETAIL_TRANSITION_ANIMATION = "DTA";
+
+    private boolean transitionAnimation;
 
 	private String location;
 	private String forecastDate;
@@ -98,8 +101,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 		if(args != null && args.containsKey(DetailActivity.IntentExtras.ForecastDate)){
 			forecastDate = args.getString(DetailActivity.IntentExtras.ForecastDate);
+            transitionAnimation = args.getBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, false);
 			getLoaderManager().initLoader(FORECAST_LOADER, null, this);
 		}
+
 
 		return rootView;
 	}
@@ -219,7 +224,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
 
-        if(activity instanceof DetailActivity){
+        if(transitionAnimation){
 
             activity.supportStartPostponedEnterTransition();
 

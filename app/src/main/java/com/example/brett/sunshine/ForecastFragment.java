@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -17,12 +18,14 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.example.brett.sunshine.data.WeatherContract;
@@ -45,6 +48,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private View emptyView;
 
     private ForecastAdapter forecastAdapter;
+    private boolean holdForTransition;
 
     private ForecastFragmentCallbackListener listener;
 
@@ -145,6 +149,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         this.setHasOptionsMenu(true);
+
+
+        if (holdForTransition) {
+            getActivity().supportPostponeEnterTransition();
+        }
+
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -167,7 +177,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(null != recyclerView){
+        if (null != recyclerView) {
             recyclerView.clearOnScrollListeners();
         }
     }
@@ -191,7 +201,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         final View parallaxBar = rootView.findViewById(R.id.parallax_bar);
 
-        if(null != parallaxBar && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+        if (null != parallaxBar && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -201,7 +211,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
                     int max = parallaxBar.getHeight();
 
-                    if(dy > 0){
+                    if (dy > 0) {
                         parallaxBar.setTranslationY(Math.max(-max, parallaxBar.getTranslationY() - dy / 2));
                     } else {
                         parallaxBar.setTranslationY(Math.min(0, parallaxBar.getTranslationY() - dy / 2));
@@ -211,9 +221,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             });
 
 
-
         }
-
 
 
         return rootView;
@@ -262,8 +270,32 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if (selectedPosition != RecyclerView.NO_POSITION) {
             recyclerView.smoothScrollToPosition(selectedPosition);
             RecyclerView.ViewHolder selectedViewHolder = recyclerView.findViewHolderForAdapterPosition(selectedPosition);
+        }
+
+
+        if(data.getCount() == 0){
+            getActivity().supportStartPostponedEnterTransition();
+        } else {
+
+            recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    // Since we know we're going to get items, we keep the listener around until
+                    // we see Children.
+                    if (recyclerView.getChildCount() > 0) {
+
+                        if ( holdForTransition ) {
+                            getActivity().supportStartPostponedEnterTransition();
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
         }
+
+
         updateEmptyViewStatusText();
     }
 
@@ -273,20 +305,29 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         Cursor weatherCursor = forecastAdapter.getWeatherCursor();
 
-        if(null == weatherCursor) {
+        if (null == weatherCursor) {
             return;
         }
 
         weatherCursor.moveToPosition(adapterPosition);
         Context context = getActivity();
 
-        if(null == context){
+        if (null == context) {
             return;
         }
 
         String dateString = weatherCursor.getString(weatherCursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT));
-        this.listener.onItemSelected(dateString);
+        this.listener.onItemSelected(dateString, viewHolder);
 
+    }
+
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(activity, attrs, savedInstanceState);
+
+        TypedArray attributesArray = activity.obtainStyledAttributes(attrs, R.styleable.ForecastFragment, 0, 0);
+
+        holdForTransition = attributesArray.getBoolean(R.styleable.ForecastFragment_sharedElementTransitions, false);
     }
 
     @Override
@@ -302,7 +343,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
         if (forecastAdapter.getItemCount() == 0) {
-                emptyView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
 
             int message = R.string.no_weather_info_available;
             @SunshineSyncAdapter.LocationStatus int locationStatus = new LocationStatusPreferenceManager().getCurrentLocationStatus(getActivity());
@@ -326,7 +367,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     }
             }
 
-            ((TextView)emptyView).setText(message);
+            ((TextView) emptyView).setText(message);
         } else {
             //count is not 0
             emptyView.setVisibility(View.GONE);

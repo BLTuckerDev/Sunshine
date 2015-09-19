@@ -9,11 +9,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.brett.sunshine.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragmentC
 
 
 	@Override
-	public void onItemSelected(String date) {
+	public void onItemSelected(String date, ForecastListItemViewHolder viewHolder) {
 
 		if(isTwoPaneMode){
 			Bundle args = new Bundle();
@@ -263,7 +265,8 @@ public class MainActivity extends AppCompatActivity implements ForecastFragmentC
 			Intent explicitIntent = new Intent(this, DetailActivity.class);
 			explicitIntent.putExtra(DetailActivity.IntentExtras.ForecastDate, date);
 
-            ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+            ActivityOptionsCompat activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                    new Pair<View,String>(viewHolder.iconView, getString(R.string.detail_icon_transition_name)));
             ActivityCompat.startActivity(this, explicitIntent, activityOptions.toBundle());
 
 		}
