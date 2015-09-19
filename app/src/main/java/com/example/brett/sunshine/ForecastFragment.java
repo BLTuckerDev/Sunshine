@@ -34,7 +34,7 @@ import static com.example.brett.sunshine.data.WeatherContract.WeatherEntry;
 
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        ForecastAdapter.ForecastAdapterOnClickHandler {
+        ForecastAdapter.ForecastAdapterDelegate {
 
     private static final int FORECAST_LOADER = 0;
     private String mLocation;
@@ -42,7 +42,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private RecyclerView recyclerView;
     private View emptyView;
-    private int position = RecyclerView.NO_POSITION;
 
     private ForecastAdapter forecastAdapter;
 
@@ -67,6 +66,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     };
 
     public ForecastFragment() {
+        this.selectedPosition = 0;
         this.setHasOptionsMenu(true);
     }
 
@@ -225,6 +225,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         forecastAdapter.swapCursor(data);
         if (selectedPosition != RecyclerView.NO_POSITION) {
             recyclerView.smoothScrollToPosition(selectedPosition);
+            RecyclerView.ViewHolder selectedViewHolder = recyclerView.findViewHolderForAdapterPosition(selectedPosition);
+
+            if(selectedViewHolder != null && selectedViewHolder instanceof ForecastListItemViewHolder){
+                ((ForecastListItemViewHolder)selectedViewHolder).onClick(selectedViewHolder.itemView);
+            }
+
         }
         updateEmptyViewStatusText();
     }
@@ -249,6 +255,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         String dateString = weatherCursor.getString(weatherCursor.getColumnIndex(WeatherEntry.COLUMN_DATETEXT));
         this.listener.onItemSelected(dateString);
 
+    }
+
+    @Override
+    public int getSelectedPosition() {
+        return this.selectedPosition;
     }
 
     private void updateEmptyViewStatusText() {

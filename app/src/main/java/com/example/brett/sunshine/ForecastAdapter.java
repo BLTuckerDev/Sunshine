@@ -2,7 +2,6 @@ package com.example.brett.sunshine;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +16,10 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
     private final static int VIEW_TYPE_TODAY = 0;
     private final static int VIEW_TYPE_FUTURE_DAY = 1;
 
-    public static interface ForecastAdapterOnClickHandler{
+    public interface ForecastAdapterDelegate {
         void onClick(int adapterPosition, ForecastListItemViewHolder viewHolder);
+
+        int getSelectedPosition();
     }
 
     private boolean useTodayLayout = false;
@@ -27,10 +28,10 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
     private final Context context;
 
     private final View emptyView;
-    private final ForecastAdapterOnClickHandler clickHandler;
+    private final ForecastAdapterDelegate clickHandler;
 
 
-    public ForecastAdapter(Context context, ForecastAdapterOnClickHandler clickHandler, View emptyView) {
+    public ForecastAdapter(Context context, ForecastAdapterDelegate clickHandler, View emptyView) {
         this.context = context;
         this.clickHandler = clickHandler;
         this.emptyView = emptyView;
@@ -90,6 +91,10 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
         String lowString = formatHelper.formatTemperature(context, weatherCursor.getDouble(weatherCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP)), isMetric);
         viewHolder.lowView.setText(lowString);
         viewHolder.lowView.setContentDescription(context.getString(R.string.a11y_low_temp, lowString));
+
+        if (position == clickHandler.getSelectedPosition()) {
+            viewHolder.onClick(viewHolder.itemView);
+        }
 
     }
 

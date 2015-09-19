@@ -13,9 +13,9 @@ public final class ForecastListItemViewHolder extends RecyclerView.ViewHolder im
     public final TextView highView;
     public final TextView lowView;
 
-    private ForecastAdapter.ForecastAdapterOnClickHandler clickHandler;
+    private ForecastAdapter.ForecastAdapterDelegate clickHandler;
 
-    public ForecastListItemViewHolder(View parentView, ForecastAdapter.ForecastAdapterOnClickHandler clickHandler) {
+    public ForecastListItemViewHolder(View parentView, ForecastAdapter.ForecastAdapterDelegate clickHandler) {
         super(parentView);
 
         this.clickHandler = clickHandler;
@@ -25,6 +25,7 @@ public final class ForecastListItemViewHolder extends RecyclerView.ViewHolder im
         descriptionView = (TextView) parentView.findViewById(R.id.list_item_forecast_textview);
         highView = (TextView) parentView.findViewById(R.id.list_item_high_textview);
         lowView = (TextView) parentView.findViewById(R.id.list_item_low_textview);
+
         parentView.setOnClickListener(this);
     }
 

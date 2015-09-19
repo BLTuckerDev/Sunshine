@@ -12,8 +12,6 @@
         android:layout_height="match_parent" />
 
 
-    <!-- empty list -->
-
 
     <TextView
         android:id="@+id/recyclerview_forecast_empty"
