@@ -62,6 +62,7 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 	@Retention(RetentionPolicy.SOURCE)
 	public @interface LocationStatus{}
 
+	public static final String ACTION_DATA_UPDATED = "com.example.brett.sunshine.app.ACTION_DATA_UPDATED";
 
 	public static final int LOCATION_STATUS_OK = 0;
 	public static final int LOCATION_STATUS_SERVER_DOWN = 1;
@@ -502,9 +503,19 @@ public final class SunshineSyncAdapter extends AbstractThreadedSyncAdapter{
 
 				getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, valuesArray);
 				this.notifyWeather();
+                this.updateWidgets();
 			}
 		}
 	}
+
+
+    private void updateWidgets(){
+        Context context = getContext();
+
+        Intent updatedDataIntent = new Intent(ACTION_DATA_UPDATED).setPackage(context.getPackageName());
+        context.sendBroadcast(updatedDataIntent);
+
+    }
 
 
     private void setLocationStatus(@LocationStatus int locationStatus){
