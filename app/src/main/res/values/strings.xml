@@ -155,4 +155,6 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
 
     <string name="detail_icon_transition_name" translatable="false">TN_DetailIcon</string>
 
+    <string name="title_widget_today">Sunshine Today</string>
+
 </resources>
