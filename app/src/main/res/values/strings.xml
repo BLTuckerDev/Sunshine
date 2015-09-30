@@ -157,4 +157,6 @@ Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</
 
     <string name="title_widget_today">Sunshine Today</string>
 
+    <string name="title_widget_detail">Sunshine Details</string>
+
 </resources>

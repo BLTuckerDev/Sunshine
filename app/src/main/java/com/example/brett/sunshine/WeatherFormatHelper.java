@@ -75,7 +75,7 @@ public final class WeatherFormatHelper {
 
 	}
 
-	public String getFriendlyDayString(Context context, String dateStr) {
+	public String getFriendlyDayString(Context context, String dateStr, boolean displayLongToday) {
 		// The day string for forecast uses the following logic:
 		// For today: "Today, June 8"
 		// For tomorrow:  "Tomorrow"
@@ -88,7 +88,7 @@ public final class WeatherFormatHelper {
 
 		// If the date we're building the String for is today's date, the format
 		// is "Today, June 24"
-		if (todayStr.equals(dateStr)) {
+		if (todayStr.equals(dateStr) && displayLongToday) {
 			String today = context.getString(R.string.today);
 			return context.getString(
 					R.string.format_full_friendly_date,

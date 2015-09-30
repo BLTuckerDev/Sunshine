@@ -52,6 +52,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private ForecastAdapter forecastAdapter;
     private boolean holdForTransition;
+    private long initialSelectedDate = -1;
 
     private ForecastFragmentCallbackListener listener;
 
@@ -299,9 +300,35 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             recyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    // Since we know we're going to get items, we keep the listener around until
-                    // we see Children.
+
+
                     if (recyclerView.getChildCount() > 0) {
+
+                        recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                        if (selectedPosition == RecyclerView.NO_POSITION && -1 != initialSelectedDate) {
+                            Cursor data = forecastAdapter.getWeatherCursor();
+                            int count = data.getCount();
+                            int dateColumn = data.getColumnIndex(WeatherEntry.COLUMN_DATETEXT);
+                            for (int i = 0; i < count; i++) {
+                                data.moveToPosition(i);
+                                if (data.getLong(dateColumn) == initialSelectedDate) {
+                                    selectedPosition = i;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (selectedPosition == RecyclerView.NO_POSITION) {
+                            selectedPosition = 0;
+                        }
+
+                        // If we don't need to restart the loader, and there's a desired position to restore
+                        // to, do so now.
+
+                        recyclerView.smoothScrollToPosition(selectedPosition);
+                        RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(selectedPosition);
+
 
                         if (holdForTransition) {
                             getActivity().supportStartPostponedEnterTransition();
@@ -318,6 +345,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         updateEmptyViewStatusText();
     }
 
+
+    public void setInitialSelectedDate(long initialSelectedDate) {
+        initialSelectedDate = initialSelectedDate;
+    }
 
     @Override
     public void onClick(int adapterPosition, ForecastListItemViewHolder viewHolder) {

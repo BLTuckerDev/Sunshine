@@ -74,9 +74,31 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
         int weatherId = weatherCursor.getInt(weatherCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID));
         WeatherFormatHelper formatHelper = new WeatherFormatHelper();
 
-        this.bindIcon(viewHolder, weatherId, weatherCursor.getPosition());
+        int viewType = getItemViewType(position);
+        int fallbackIconId;
+        boolean useLongToday;
 
-        viewHolder.dateView.setText(formatHelper.getFriendlyDayString(context, weatherCursor.getString(weatherCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT))));
+        switch (viewType) {
+            case VIEW_TYPE_FUTURE_DAY:
+                fallbackIconId = WeatherResourceConverter.getConverter().getArtResourceForWeatherCondition(weatherId);
+                useLongToday = true;
+                break;
+            default:
+                fallbackIconId = WeatherResourceConverter.getConverter().getIconResourceForWeatherCondition(weatherId);
+                useLongToday = false;
+                break;
+        }
+
+
+        Glide.with(this.context)
+                .load(WeatherResourceConverter.getConverter().getArtUrlForWeatherCondition(this.context, weatherId))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(viewHolder.iconView);
+
+        viewHolder.dateView.setText(
+                formatHelper.getFriendlyDayString(
+                        context, weatherCursor.getString(weatherCursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT)),useLongToday));
 
 
         String descriptionString = WeatherResourceConverter.getConverter().getStringForWeatherCondition(context, weatherId);
@@ -129,28 +151,5 @@ public final class ForecastAdapter extends RecyclerView.Adapter<ForecastListItem
         return (position == 0 && useTodayLayout) ? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE_DAY;
     }
 
-
-    private void bindIcon(ForecastListItemViewHolder viewHolder, int weatherId, int position) {
-
-        int viewType = getItemViewType(position);
-        int fallbackIconId;
-
-        switch (viewType) {
-            case VIEW_TYPE_FUTURE_DAY:
-                fallbackIconId = WeatherResourceConverter.getConverter().getArtResourceForWeatherCondition(weatherId);
-                break;
-            default:
-                fallbackIconId = WeatherResourceConverter.getConverter().getIconResourceForWeatherCondition(weatherId);
-                break;
-        }
-
-
-        Glide.with(this.context)
-                .load(WeatherResourceConverter.getConverter().getArtUrlForWeatherCondition(this.context, weatherId))
-                .error(fallbackIconId)
-                .crossFade()
-                .into(viewHolder.iconView);
-
-    }
 
 }
