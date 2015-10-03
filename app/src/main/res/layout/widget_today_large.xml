@@ -40,7 +40,6 @@
             android:layout_toRightOf="@id/widget_icon"
             android:fontFamily="sans-serif-condensed"
             android:paddingLeft="16dp"
-            android:paddingStart="16dp"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="@color/primary_text"
             tools:text="Clear" />

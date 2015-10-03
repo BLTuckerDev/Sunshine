@@ -18,6 +18,7 @@ import android.widget.RemoteViewsService;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
+import com.example.brett.sunshine.DetailActivity;
 import com.example.brett.sunshine.PreferredLocationFetcher;
 import com.example.brett.sunshine.R;
 import com.example.brett.sunshine.WeatherFormatHelper;
@@ -143,14 +144,21 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 views.setTextViewText(R.id.widget_low_temperature, formattedMinTemperature);
 
                 final Intent fillInIntent = new Intent();
+
                 PreferredLocationFetcher preferredLocationFetcher = new PreferredLocationFetcher();
+
                 String locationSetting =
                         preferredLocationFetcher.getPreferredLocation(DetailWidgetRemoteViewsService.this);
                 Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                         locationSetting,
                         String.valueOf(dateInMillis));
+
+                String dateString = data.getString(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATETEXT));
+
                 fillInIntent.setData(weatherUri);
+                fillInIntent.putExtra(DetailActivity.IntentExtras.ForecastDate, dateString);
                 views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
+
                 return views;
             }
 

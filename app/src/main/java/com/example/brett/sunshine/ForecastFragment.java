@@ -124,7 +124,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     private void launchWeatherTask() {
-        SunshineSyncAdapter.initializeSyncAdapter(getActivity());
+        SunshineSyncAdapter.syncImmediately(this.getActivity());
     }
 
 

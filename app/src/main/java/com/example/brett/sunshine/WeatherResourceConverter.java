@@ -10,9 +10,9 @@ public final class WeatherResourceConverter {
 
     private static WeatherResourceConverter converter;
 
-    public static synchronized WeatherResourceConverter getConverter(){
+    public static synchronized WeatherResourceConverter getConverter() {
 
-        if(null == converter){
+        if (null == converter) {
             converter = new WeatherResourceConverter();
         }
 
@@ -54,14 +54,14 @@ public final class WeatherResourceConverter {
     }
 
 
-    public String getStringForWeatherCondition(Context context, int weatherId){
+    public String getStringForWeatherCondition(Context context, int weatherId) {
 
         int stringId;
         if (weatherId >= 200 && weatherId <= 232) {
             stringId = R.string.condition_2xx;
         } else if (weatherId >= 300 && weatherId <= 321) {
             stringId = R.string.condition_3xx;
-        } else switch(weatherId) {
+        } else switch (weatherId) {
             case 500:
                 stringId = R.string.condition_500;
                 break;
@@ -284,5 +284,33 @@ public final class WeatherResourceConverter {
     }
 
 
+    public static String getImageUrlForWeatherCondition(int weatherId) {
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return "http://upload.wikimedia.org/wikipedia/commons/2/28/Thunderstorm_in_Annemasse,_France.jpg";
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return "http://upload.wikimedia.org/wikipedia/commons/a/a0/Rain_on_leaf_504605006.jpg";
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return "http://upload.wikimedia.org/wikipedia/commons/6/6c/Rain-on-Thassos.jpg";
+        } else if (weatherId == 511) {
+            return "http://upload.wikimedia.org/wikipedia/commons/b/b8/Fresh_snow.JPG";
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return "http://upload.wikimedia.org/wikipedia/commons/6/6c/Rain-on-Thassos.jpg";
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return "http://upload.wikimedia.org/wikipedia/commons/b/b8/Fresh_snow.JPG";
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return "http://upload.wikimedia.org/wikipedia/commons/e/e6/Westminster_fog_-_London_-_UK.jpg";
+        } else if (weatherId == 761 || weatherId == 781) {
+            return "http://upload.wikimedia.org/wikipedia/commons/d/dc/Raised_dust_ahead_of_a_severe_thunderstorm_1.jpg";
+        } else if (weatherId == 800) {
+            return "http://upload.wikimedia.org/wikipedia/commons/7/7e/A_few_trees_and_the_sun_(6009964513).jpg";
+        } else if (weatherId == 801) {
+            return "http://upload.wikimedia.org/wikipedia/commons/e/e7/Cloudy_Blue_Sky_(5031259890).jpg";
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return "http://upload.wikimedia.org/wikipedia/commons/5/54/Cloudy_hills_in_Elis,_Greece_2.jpg";
+        }
+        return null;
+    }
 
 }
